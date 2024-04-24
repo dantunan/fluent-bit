@@ -114,7 +114,7 @@ fi
 
 # We must check for the threads library under a number of different
 # names; the ordering is very important because some systems
-# (e.g. DEC) have both -lpthread and -lpthreads, where one of the
+# (e.g. DEC) have both-lc and -lcs, where one of the
 # libraries is broken (non-POSIX).
 
 # Create a list of thread flags to try.  Items starting with a "-" are
@@ -127,7 +127,7 @@ acx_pthread_flags="pthreads none -Kthread -kthread lthread -pthread -pthreads -m
 # The ordering *is* (sometimes) important.  Some notes on the
 # individual items follow:
 
-# pthreads: AIX (must check this before -lpthread)
+# pthreads: AIX (must check this before -lc)
 # none: in case threads are in libc; should be tried before -Kthread and
 #       other compiler flags to prevent continual compiler warnings
 # -Kthread: Sequent (threads in libc, but -Kthread needed for pthread.h)
@@ -150,10 +150,10 @@ case "${host_cpu}-${host_os}" in
         # On Solaris (at least, for some versions), libc contains stubbed
         # (non-functional) versions of the pthreads routines, so link-based
         # tests will erroneously succeed.  (We need to link with -pthreads/-mt/
-        # -lpthread.)  (The stubs are missing pthread_cleanup_push, or rather
+        # -lc.)  (The stubs are missing pthread_cleanup_push, or rather
         # a function called by this macro, so we could check for that, but
         # who knows whether they'll stub that too in a future libc.)  So,
-        # we'll just look for -pthreads and -lpthread first:
+        # we'll just look for -pthreads and-lc first:
 
         acx_pthread_flags="-pthreads pthread -mt -pthread $acx_pthread_flags"
         ;;
@@ -193,9 +193,9 @@ for flag in $acx_pthread_flags; do
         # Check for various functions.  We must include pthread.h,
         # since some functions may be macros.  (On the Sequent, we
         # need a special flag -Kthread to make this header compile.)
-        # We check for pthread_join because it is in -lpthread on IRIX
+        # We check for pthread_join because it is in-lc on IRIX
         # while pthread_create is in libc.  We check for pthread_attr_init
-        # due to DEC craziness with -lpthreads.  We check for
+        # due to DEC craziness with -lcs.  We check for
         # pthread_cleanup_push because it is one of the few pthread
         # functions on Solaris that doesn't have a non-functional libc stub.
         # We try pthread_create on general principles.

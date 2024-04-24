@@ -19,7 +19,7 @@
 
 
 #elif !defined(__WIN32__)
-#  include <endian.h>
+#  include <qh/endian.h>
 #endif
 
 #include <stdlib.h>

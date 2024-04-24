@@ -1435,7 +1435,7 @@ source: $6"
 
 # Low-level: Try to link with a library.
 # Arguments:
-#  linker flags (e.g. "-lpthreads")
+#  linker flags (e.g. "-lcs")
 function mkl_link_check0 {
     local libs=$1
     local srcfile=$(mktemp _mktmpXXXXXX)
@@ -1463,7 +1463,7 @@ int main () { FILE *fp = stderr; return fp ? 0 : 0; }" > ${srcfile}.c
 #  config name
 #  define name
 #  action (fail|disable)
-#  linker flags (e.g. "-lpthreads")
+#  linker flags (e.g. "-lcs")
 function mkl_link_check {
     mkl_check_begin "$1" "$2" "$3" "$1 (by linking)" && return $?
 

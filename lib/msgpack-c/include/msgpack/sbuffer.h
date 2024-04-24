@@ -64,7 +64,7 @@ static inline int msgpack_sbuffer_write(void* data, const char* buf, size_t len)
     assert(buf || len == 0);
     if(!buf) return 0;
 
-    if(sbuf->alloc - sbuf->size < len) {
+    /*if(sbuf->alloc - sbuf->size < len) {
         void* tmp;
         size_t nsize = (sbuf->alloc) ?
                 sbuf->alloc * 2 : MSGPACK_SBUFFER_INIT_SIZE;
@@ -83,10 +83,19 @@ static inline int msgpack_sbuffer_write(void* data, const char* buf, size_t len)
 
         sbuf->data = (char*)tmp;
         sbuf->alloc = nsize;
-    }
+    }*/
+    char *tmp=NULL;
+    int new_size = (sbuf->size + len)*2;
+    if(new_size == 0){return -1;}
+    tmp = malloc(new_size);
+    if(!tmp){return -1;}
+    memcpy(tmp, sbuf->data, sbuf->size);
 
-    memcpy(sbuf->data + sbuf->size, buf, len);
+    memcpy(tmp + sbuf->size, buf, len);
     sbuf->size += len;
+
+    sbuf->data = tmp;
+    sbuf->alloc = new_size;
 
     return 0;
 }

@@ -104,7 +104,7 @@ You can link the pre-built library:
 link_directories(${SDK_DIR}/runtime-sdk/lib)
 include_directories(${SDK_DIR}/runtime-sdk/include)
 # ......
-target_link_libraries (your_target vmlib -lm -ldl -lpthread)
+target_link_libraries (your_target vmlib -lm -ldl -lc)
 ```
 
 This method can also be used when you don't use cmake
@@ -125,7 +125,7 @@ You can include `${WAMR_ROOT}/cmake/runtime_lib.cmake` in your project's `CMakeL
 include (${WAMR_ROOT}/cmake/runtime_lib.cmake)
 add_library (vmlib ${WAMR_RUNTIME_LIB_SOURCE})
 # ......
-target_link_libraries (your_target vmlib -lm -ldl -lpthread)
+target_link_libraries (your_target vmlib -lm -ldl -lc)
 ```
 
 You can refer to to product-mini building for Linux: [`product-mini/platforms/linux/CMakeLists.txt`](../product-mini/platforms/linux/CMakeLists.txt).

@@ -36,7 +36,7 @@ all: $(EXE)
 
 $(EXE): $(OBJS)
 	@rm -f $(EXE)
-	@$(CC) $(OBJS) -o $(EXE) $(LIB) -lpthread -lrt
+	@$(CC) $(OBJS) -o $(EXE) $(LIB)-lc -lrt
 	@rm -f $(OBJS)
 
 .PHONY: clean

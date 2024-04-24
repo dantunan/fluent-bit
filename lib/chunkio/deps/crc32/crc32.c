@@ -52,7 +52,8 @@
 #  endif
 # endif
 #else
-#  include <endian.h>
+// #  include <qh/endian.h>
+#include <gulliver.h>
 #endif
 
 /**

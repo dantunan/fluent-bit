@@ -466,9 +466,9 @@ IF (CARES_THREADS)
 		IF (Threads_FOUND)
 			# Fix solaris9 bug due to libc having pthread_create() stubs that always fail.  CMake
 			# doesn't realize that the real pthread functions aren't in libc, so sets the pthread
-			# library CAKE_THREAD_LIBS_INIT variable to blank instead of to the correct "-lpthread".
+			# library CAKE_THREAD_LIBS_INIT variable to blank instead of to the correct "-lc".
 			IF (CMAKE_SYSTEM_NAME STREQUAL "SunOS" AND NOT CMAKE_THREAD_LIBS_INIT)
-				SET (CMAKE_THREAD_LIBS_INIT "-lpthread")
+				SET (CMAKE_THREAD_LIBS_INIT "-lc")
 			ENDIF ()
 
 			# PThread functions.

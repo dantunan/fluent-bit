@@ -121,7 +121,7 @@ set_target_properties (hello PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_include_directories(hello PRIVATE ${UNCOMMON_SHARED_DIR})
 
-target_link_libraries(hello vmlib -lpthread -lm)
+target_link_libraries(hello vmlib-lc -lm)
 
 if (MSVC)
   target_compile_definitions(hello PRIVATE WASM_API_EXTERN=)

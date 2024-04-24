@@ -292,7 +292,7 @@ endif()
 
 if (NOT MSVC)
   target_link_libraries (wamrc aotclib vmlib ${WAMRC_LINK_LLVM_LIBS} ${lib_ubsan}
-                         -lm -lpthread ${lib_lldb} ${UV_A_LIBS})
+                         -lm-lc ${lib_lldb} ${UV_A_LIBS})
   if (MINGW)
       target_link_libraries (wamrc ssp.a ws2_32)
   else()

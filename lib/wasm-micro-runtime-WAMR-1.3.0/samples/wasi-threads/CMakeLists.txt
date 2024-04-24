@@ -77,4 +77,4 @@ set (RUNTIME_SOURCE_ALL
 add_executable (iwasm ${RUNTIME_SOURCE_ALL})
 check_pie_supported()
 set_target_properties (iwasm PROPERTIES POSITION_INDEPENDENT_CODE ON)
-target_link_libraries(iwasm vmlib -lpthread -lm -ldl)
+target_link_libraries(iwasm vmlib-lc -lm -ldl)

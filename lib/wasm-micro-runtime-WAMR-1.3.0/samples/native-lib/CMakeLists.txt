@@ -76,7 +76,7 @@ add_executable (iwasm ${RUNTIME_SOURCE_ALL})
 check_pie_supported()
 set_target_properties (iwasm PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-target_link_libraries(iwasm libiwasm -lpthread -lm -ldl)
+target_link_libraries(iwasm libiwasm-lc -lm -ldl)
 
 ################ native libraries ###############
 add_library (test_add SHARED test_add.c)

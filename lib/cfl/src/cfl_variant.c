@@ -87,60 +87,47 @@ int cfl_variant_print(FILE *fp, struct cfl_variant *val)
     return ret;
 }
 
-struct cfl_variant *cfl_variant_create_from_string_s(char *value, size_t value_size, int referenced)
+struct cfl_variant *cfl_variant_create_from_string_s(char *value, size_t value_size)
 {
     struct cfl_variant *instance;
 
     instance = cfl_variant_create();
-    if (!instance) {
-        return NULL;
-    }
-    instance->referenced = referenced;
 
-    if (referenced) {
-        instance->data.as_string = value;
-    }
-    else {
+    if (instance != NULL) {
         instance->data.as_string = cfl_sds_create_len(value, value_size);
         if (instance->data.as_string == NULL) {
             free(instance);
             instance = NULL;
         }
-
+        else {
+            instance->type = CFL_VARIANT_STRING;
+        }
     }
-    cfl_variant_size_set(instance, value_size);
-    instance->type = CFL_VARIANT_STRING;
 
     return instance;
 }
 
 struct cfl_variant *cfl_variant_create_from_string(char *value)
 {
-    return cfl_variant_create_from_string_s(value, strlen(value), CFL_FALSE);
+    return cfl_variant_create_from_string_s(value, strlen(value));
 }
 
-struct cfl_variant *cfl_variant_create_from_bytes(char *value, size_t length, int referenced)
+struct cfl_variant *cfl_variant_create_from_bytes(char *value, size_t length)
 {
     struct cfl_variant *instance;
 
     instance = cfl_variant_create();
-    if (!instance){
-        return NULL;
-    }
-    instance->referenced = referenced;
 
-    if (referenced) {
-        instance->data.as_bytes = value;
-    }
-    else {
+    if (instance != NULL) {
         instance->data.as_bytes = cfl_sds_create_len(value, length);
         if (instance->data.as_bytes == NULL) {
             free(instance);
             instance = NULL;
         }
+        else {
+            instance->type = CFL_VARIANT_BYTES;
+        }
     }
-    cfl_variant_size_set(instance, length);
-    instance->type = CFL_VARIANT_BYTES;
 
     return instance;
 }
@@ -257,7 +244,6 @@ struct cfl_variant *cfl_variant_create()
         cfl_errno();
         return NULL;
     }
-    instance->size = 0;
 
     return instance;
 }
@@ -270,7 +256,7 @@ void cfl_variant_destroy(struct cfl_variant *instance)
 
     if (instance->type == CFL_VARIANT_STRING ||
         instance->type == CFL_VARIANT_BYTES) {
-        if (instance->data.as_string != NULL && !instance->referenced) {
+        if (instance->data.as_string != NULL) {
             cfl_sds_destroy(instance->data.as_string);
         }
     }
@@ -282,14 +268,4 @@ void cfl_variant_destroy(struct cfl_variant *instance)
     }
 
     free(instance);
-}
-
-void cfl_variant_size_set(struct cfl_variant *var, size_t size)
-{
-    var->size = size;
-}
-
-size_t cfl_variant_size_get(struct cfl_variant *var)
-{
-    return var->size;
 }

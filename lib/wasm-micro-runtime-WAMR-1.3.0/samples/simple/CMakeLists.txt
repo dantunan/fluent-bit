@@ -35,6 +35,6 @@ include_directories(${CMAKE_CURRENT_LIST_DIR}/src)
 #add_definitions (-DCONNECTION_UART)
 
 add_executable (simple src/main.c src/iwasm_main.c)
-target_link_libraries (simple vmlib -lm -ldl -lpthread -lrt)
+target_link_libraries (simple vmlib -lm -ldl-lc -lrt)
 
 

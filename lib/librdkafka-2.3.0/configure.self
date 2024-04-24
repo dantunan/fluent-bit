@@ -53,7 +53,7 @@ function checks {
     mkl_lib_check "librt" "" cont CC "-lrt"
 
     # pthreads required (even if C11 threads available) for rwlocks.
-    mkl_lib_check "libpthread" "" fail CC "-lpthread" \
+    mkl_lib_check "libpthread" "" fail CC "-lc" \
                   "#include <pthread.h>"
 
     if [[ $ENABLE_C11THREADS != n ]]; then
@@ -63,7 +63,7 @@ function checks {
             *) mkl_err "mklove internal error: invalid value for ENABLE_C11THREADS: $ENABLE_C11THREADS"; exit 1 ;;
         esac
         # Use internal tinycthread if C11 threads not available.
-        # Requires -lpthread on glibc c11 threads, thus the use of $LIBS.
+        # Requires-lc on glibc c11 threads, thus the use of $LIBS.
         mkl_lib_check "c11threads" WITH_C11THREADS $action CC "$LIBS" \
                       "
 #include <threads.h>
@@ -255,7 +255,7 @@ char *foo (const char *needle) {
 
 
     # See if GNU's pthread_setname_np() is available, and in what form.
-    mkl_compile_check "pthread_setname_gnu" "HAVE_PTHREAD_SETNAME_GNU" disable CC "-D_GNU_SOURCE -lpthread" \
+    mkl_compile_check "pthread_setname_gnu" "HAVE_PTHREAD_SETNAME_GNU" disable CC "-D_GNU_SOURCE -lc" \
 '
 #include <pthread.h>
 
@@ -263,7 +263,7 @@ void foo (void) {
   pthread_setname_np(pthread_self(), "abc");
 }
 ' || \
-    mkl_compile_check "pthread_setname_darwin" "HAVE_PTHREAD_SETNAME_DARWIN" disable CC "-D_DARWIN_C_SOURCE -lpthread" \
+    mkl_compile_check "pthread_setname_darwin" "HAVE_PTHREAD_SETNAME_DARWIN" disable CC "-D_DARWIN_C_SOURCE -lc" \
 '
 #include <pthread.h>
 
@@ -271,7 +271,7 @@ void foo (void) {
   pthread_setname_np("abc");
 }
 ' || \
-    mkl_compile_check "pthread_setname_freebsd" "HAVE_PTHREAD_SETNAME_FREEBSD" disable CC "-lpthread" \
+    mkl_compile_check "pthread_setname_freebsd" "HAVE_PTHREAD_SETNAME_FREEBSD" disable CC "-lc" \
 '
 #include <pthread.h>
 #include <pthread_np.h>

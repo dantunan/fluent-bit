@@ -21,6 +21,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <time.h>
+#include <sys/iomgr.h>
 #ifdef FLB_SYSTEM_FREEBSD
 #include <sys/user.h>
 #include <libutil.h>
@@ -1711,7 +1712,9 @@ char *flb_tail_file_name(struct flb_tail_file *file)
 {
     int ret;
     char *buf;
-#ifdef __linux__
+#ifdef __QNX__
+    int buf_len=0;
+#elif defined(__linux__)
     ssize_t s;
     char tmp[128];
 #elif defined(__APPLE__)
@@ -1745,6 +1748,15 @@ char *flb_tail_file_name(struct flb_tail_file *file)
         return NULL;
     }
     buf[s] = '\0';
+
+#elif defined(__QNX__)
+    buf_len = iofdinfo(file->fd, _FDINFO_FLAG_LOCALPATH, NULL, buf, PATH_MAX);
+    if (buf_len == -1){
+        flb_errno();
+        flb_free(buf);
+        return NULL;
+    }
+    buf[buf_len] = '\0';
 
 #elif __APPLE__
     int len;

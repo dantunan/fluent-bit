@@ -21,7 +21,7 @@
 #define FLB_OUTPUT_H
 
 #ifndef _XOPEN_SOURCE
-#define _XOPEN_SOURCE
+#define _XOPEN_SOURCE 500
 #endif
 
 #ifndef _GNU_SOURCE

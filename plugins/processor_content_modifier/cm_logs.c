@@ -84,8 +84,9 @@ static int hash_transformer(void *context, struct cfl_variant *value)
         return FLB_FALSE;
     }
 
-    if (cfl_variant_size_get(converted_value) == 0) {
+    if (cfl_sds_len(converted_value->data.as_string) == 0) {
         cfl_variant_destroy(converted_value);
+
         return FLB_TRUE;
     }
 
@@ -117,12 +118,9 @@ static int hash_transformer(void *context, struct cfl_variant *value)
         return FLB_FALSE;
     }
 
-    /* NOTE: this part does a manual modification of the variant content */
     if (value->type == CFL_VARIANT_STRING ||
         value->type == CFL_VARIANT_BYTES) {
-        if (value->referenced == CFL_FALSE) {
-            cfl_sds_destroy(value->data.as_string);
-        }
+        cfl_sds_destroy(value->data.as_string);
     }
     else if (value->type == CFL_VARIANT_ARRAY) {
         cfl_array_destroy(value->data.as_array);
@@ -133,9 +131,6 @@ static int hash_transformer(void *context, struct cfl_variant *value)
 
     value->type = CFL_VARIANT_STRING;
     value->data.as_string = encoded_hash;
-    value->referenced = CFL_FALSE;
-
-    cfl_variant_size_set(value, cfl_sds_len(encoded_hash));
 
     return FLB_TRUE;
 }
@@ -166,13 +161,12 @@ int cfl_variant_convert(struct cfl_variant *input_value,
                         int output_type)
 {
     int ret;
-    int errno_backup;
     int64_t as_int;
-    double as_double;
     char buf[64];
-    char *str = NULL;
-    char *converstion_canary = NULL;
+    double as_double;
+    char              *converstion_canary;
     struct cfl_variant *tmp = NULL;
+    int                errno_backup;
 
     errno_backup = errno;
 
@@ -184,8 +178,7 @@ int cfl_variant_convert(struct cfl_variant *input_value,
             output_type == CFL_VARIANT_BYTES) {
 
             tmp = cfl_variant_create_from_string_s(input_value->data.as_string,
-                                                   cfl_variant_size_get(input_value),
-                                                   CFL_FALSE);
+                                                   cfl_sds_len(input_value->data.as_string));
             if (!tmp) {
                 return CFL_FALSE;
             }
@@ -193,12 +186,10 @@ int cfl_variant_convert(struct cfl_variant *input_value,
         else if (output_type == CFL_VARIANT_BOOL) {
             as_int = CFL_FALSE;
 
-            if (cfl_variant_size_get(input_value) == 4 &&
-                strncasecmp(input_value->data.as_string, "true", 4) == 0) {
+            if (strcasecmp(input_value->data.as_string, "true") == 0) {
                 as_int = CFL_TRUE;
             }
-            else if (cfl_variant_size_get(input_value) == 5 &&
-                strncasecmp(input_value->data.as_string, "false", 5) == 0) {
+            else if (strcasecmp(input_value->data.as_string, "false") == 0) {
                 as_int = CFL_FALSE;
             }
 
@@ -206,31 +197,10 @@ int cfl_variant_convert(struct cfl_variant *input_value,
         }
         else if (output_type == CFL_VARIANT_INT) {
             errno = 0;
-
-            if (input_value->referenced) {
-                tmp = cfl_variant_create_from_string_s(input_value->data.as_string,
-                                                       cfl_variant_size_get(input_value),
-                                                       CFL_FALSE);
-                if (!tmp) {
-                    return CFL_FALSE;
-                }
-                str = tmp->data.as_string;
-            }
-            else {
-                str = input_value->data.as_string;
-            }
-
-            as_int = strtoimax(str, &converstion_canary, 10);
+            as_int = strtoimax(input_value->data.as_string, &converstion_canary, 10);
             if (errno == ERANGE || errno == EINVAL) {
                 errno = errno_backup;
-                if (tmp) {
-                    cfl_variant_destroy(tmp);
-                }
                 return CFL_FALSE;
-            }
-
-            if (tmp) {
-                cfl_variant_destroy(tmp);
             }
 
             tmp = cfl_variant_create_from_int64(as_int);
@@ -238,31 +208,10 @@ int cfl_variant_convert(struct cfl_variant *input_value,
         else if (output_type == CFL_VARIANT_DOUBLE) {
             errno = 0;
             converstion_canary = NULL;
-
-            if (input_value->referenced) {
-                tmp = cfl_variant_create_from_string_s(input_value->data.as_string,
-                                                       cfl_variant_size_get(input_value),
-                                                       CFL_FALSE);
-                if (!tmp) {
-                    return CFL_FALSE;
-                }
-                str = tmp->data.as_string;
-            }
-            else {
-                str = input_value->data.as_string;
-            }
-
-            as_double = strtod(str, &converstion_canary);
+            as_double = strtod(input_value->data.as_string, &converstion_canary);
             if (errno == ERANGE) {
                 errno = errno_backup;
-                if (tmp) {
-                    cfl_variant_destroy(tmp);
-                }
                 return CFL_FALSE;
-            }
-
-            if (tmp) {
-                cfl_variant_destroy(tmp);
             }
 
             if (as_double == 0 && converstion_canary == input_value->data.as_string) {
@@ -283,7 +232,7 @@ int cfl_variant_convert(struct cfl_variant *input_value,
             if (ret < 0 || ret >= sizeof(buf)) {
                 return CFL_FALSE;
             }
-            tmp = cfl_variant_create_from_string_s(buf, ret, CFL_FALSE);
+            tmp = cfl_variant_create_from_string_s(buf, ret);
         }
         else if (output_type == CFL_VARIANT_BOOL) {
             as_int = CFL_FALSE;
@@ -312,7 +261,7 @@ int cfl_variant_convert(struct cfl_variant *input_value,
             if (ret < 0 || ret >= sizeof(buf)) {
                 return CFL_FALSE;
             }
-            tmp = cfl_variant_create_from_string_s(buf, ret, CFL_FALSE);
+            tmp = cfl_variant_create_from_string_s(buf, ret);
         }
         else if (output_type == CFL_VARIANT_BOOL) {
             as_int = CFL_FALSE;
@@ -339,7 +288,7 @@ int cfl_variant_convert(struct cfl_variant *input_value,
         if (output_type == CFL_VARIANT_STRING ||
             output_type == CFL_VARIANT_BYTES) {
 
-            tmp = cfl_variant_create_from_string_s("null", 4, CFL_FALSE);
+            tmp = cfl_variant_create_from_string_s("null", 4);
         }
         else if (output_type == CFL_VARIANT_BOOL) {
             tmp = cfl_variant_create_from_bool(CFL_FALSE);
@@ -401,8 +350,7 @@ static int run_action_insert(struct content_modifier_ctx *ctx,
 
     /* insert the new value */
     kvlist = obj->variant->data.as_kvlist;
-    ret = cfl_kvlist_insert_string_s(kvlist, key, cfl_sds_len(key), value, cfl_sds_len(value),
-                                     CFL_FALSE);
+    ret = cfl_kvlist_insert_string_s(kvlist, key, cfl_sds_len(key), value, cfl_sds_len(value));
     if (ret != 0) {
         printf("Failed to insert key: %s\n", key);
         return -1;
@@ -428,8 +376,7 @@ static int run_action_upsert(struct content_modifier_ctx *ctx,
     }
 
     /* insert the key with the updated value */
-    ret = cfl_kvlist_insert_string_s(kvlist, key, cfl_sds_len(key), value, cfl_sds_len(value),
-                                     CFL_FALSE);
+    ret = cfl_kvlist_insert_string_s(kvlist, key, cfl_sds_len(key), value, cfl_sds_len(value));
     if (ret != 0) {
         return -1;
     }
@@ -514,8 +461,7 @@ static void cb_extract_regex(const char *name, const char *value, size_t value_l
         cfl_kvlist_remove(kvlist, (char *) name);
     }
 
-    cfl_kvlist_insert_string_s(kvlist, (char *) name, strlen(name), (char *) value, value_length,
-                               CFL_FALSE);
+    cfl_kvlist_insert_string_s(kvlist, (char *) name, strlen(name), (char *) value, value_length);
 }
 
 int run_action_extract(struct content_modifier_ctx *ctx,
@@ -543,9 +489,7 @@ int run_action_extract(struct content_modifier_ctx *ctx,
         return -1;
     }
 
-    match_count = flb_regex_do(regex,
-                               v->data.as_string,
-                               cfl_variant_size_get(v), &match_list);
+    match_count = flb_regex_do(regex, v->data.as_string, cfl_sds_len(v->data.as_string), &match_list);
     if (match_count <= 0) {
         return -1;
     }

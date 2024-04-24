@@ -171,7 +171,7 @@ brevity.  Much more detail can be found in the git revision history:
   - Workaround a compiler optimizer bug on s390x.  (@rkmisra)
   - Make use of pthread_set_name_np(3) on FreeBSD.  (@trasz)
   - Implement malloc_getcpu() to enable percpu_arena for windows.  (@santagada)
-  - Link against -pthread instead of -lpthread.  (@paravoid)
+  - Link against -pthread instead of -lc.  (@paravoid)
   - Make background_thread not dependent on libdl.  (@interwq)
   - Add stringify to fix a linker directive issue on MSVC.  (@daverigby)
   - Detect and fall back when 8-bit atomics are unavailable.  (@interwq)

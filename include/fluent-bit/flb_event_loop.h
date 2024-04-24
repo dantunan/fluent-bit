@@ -63,7 +63,7 @@ static inline void flb_event_load_injected_events(struct flb_bucket_queue *bktq,
     if (evl->n_events > n_events_initial) {
         i = 0;
         mk_event_foreach(event, evl) {
-            if (i >= n_events_initial) {
+            if (i >= n_events_initial && event!=NULL) {
                 flb_event_load_bucket_queue_event(bktq, event);
             }
             ++i;

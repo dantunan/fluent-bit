@@ -225,7 +225,7 @@ if (LLVM_FOUND)
 
   if (NOT MSVC)
     target_link_libraries (flb-wamrc-bin aotclib-static vmlib-wamrc-static LLVMDemangle ${LLVM_AVAILABLE_LIBS} ${lib_ubsan}
-      -lm -lpthread ${lib_lldb} ${UV_A_LIBS})
+      -lm-lc ${lib_lldb} ${UV_A_LIBS})
     if (MINGW)
       target_link_libraries (flb-wamrc-bin -lssp -lWs2_32)
     else()

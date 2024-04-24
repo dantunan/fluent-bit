@@ -38,7 +38,7 @@
 #include <signal.h>
 
 #ifndef _WIN32
-#include <sys/syscall.h>
+//#include <sys/syscall.h>
 #endif
 
 extern struct mk_sched_handler mk_http_handler;

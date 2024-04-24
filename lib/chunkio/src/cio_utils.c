@@ -25,8 +25,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <dirent.h>
 #ifndef _MSC_VER
-#include <fts.h>
+//#include <fts.h>
 #endif
 
 #include <chunkio/cio_info.h>
@@ -34,6 +35,7 @@
 #include <chunkio/chunkio.h>
 #include <chunkio/cio_log.h>
 
+#include <sys/wait.h>
 #ifndef _MSC_VER
 /*
  * Taken from StackOverflow:
@@ -43,7 +45,47 @@
 int cio_utils_recursive_delete(const char *dir)
 {
     int ret = 0;
-    FTS *ftsp = NULL;
+    int buf_len = 0;
+    DIR* dirp;
+    struct stat st;
+    struct dirent* direntp;
+    char *tmp_buf;
+
+    dirp = opendir(dir);
+    if (dirp != NULL){
+        for (;;){
+            direntp = readdir(dirp);
+            if(direntp == NULL) break;
+            buf_len = strlen(dir) + strlen(direntp->d_name) + 2;
+            tmp_buf = malloc(buf_len);
+            if (tmp_buf == NULL){
+                return EXIT_FAILURE;
+            }
+            strcpy(tmp_buf, dir);
+            strcat(tmp_buf, "/");
+            strcat(tmp_buf, direntp->d_name);
+            
+            if(strcmp(direntp->d_name, ".")!=0 &&
+               strcmp(direntp->d_name, "..")!=0){
+              stat(tmp_buf, &st);
+              if(S_ISREG(st.st_mode)){
+                remove(tmp_buf);
+              }
+              else if(S_ISDIR(st.st_mode)){
+                cio_utils_recursive_delete(tmp_buf);
+              }
+              else{
+                printf("Do Nothing");
+              }
+            }
+            free(tmp_buf);
+        }
+        closedir( dirp );
+        rmdir(dir);
+        return EXIT_SUCCESS;
+    }
+    /*ret = system(command_buf);*/
+    /*FTS *ftsp = NULL;
     FTSENT *curr;
     char *files[] = { (char *) dir, NULL };
     struct stat st;
@@ -91,7 +133,7 @@ int cio_utils_recursive_delete(const char *dir)
  finish:
     if (ftsp) {
         fts_close(ftsp);
-    }
+    }*/
 
     return ret;
 }

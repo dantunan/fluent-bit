@@ -76,4 +76,4 @@ set (RUNTIME_SOURCE_ALL
 add_executable (spawn_thread ${RUNTIME_SOURCE_ALL})
 check_pie_supported()
 set_target_properties (spawn_thread PROPERTIES POSITION_INDEPENDENT_CODE ON)
-target_link_libraries(spawn_thread vmlib -lpthread -lm)
+target_link_libraries(spawn_thread vmlib-lc -lm)

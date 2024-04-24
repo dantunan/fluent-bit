@@ -3,4 +3,4 @@ set(src
   )
 
 FLB_PLUGIN(in_kafka "${src}" "rdkafka")
-target_link_libraries(flb-plugin-in_kafka -lpthread)
+target_link_libraries(flb-plugin-in_kafka -lc)

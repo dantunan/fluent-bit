@@ -19,4 +19,4 @@ add_library(vmlib ${WAMR_RUNTIME_LIB_SOURCE})
 
 add_executable(mem_alloc_test main.c)
 
-target_link_libraries(mem_alloc_test vmlib -lm -lpthread)
+target_link_libraries(mem_alloc_test vmlib -lm -lc)

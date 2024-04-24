@@ -1871,7 +1871,7 @@ static int net_address_unix_socket_peer_pid_raw(flb_sockfd_t fd,
                                                 int output_buffer_size,
                                                 size_t *output_data_size)
 {
-#if !defined(FLB_SYSTEM_MACOS) && !defined(FLB_SYSTEM_FREEBSD)
+#if !defined(FLB_SYSTEM_MACOS) && !defined(FLB_SYSTEM_FREEBSD) && !defined(__QNX__)
     unsigned int peer_credentials_size;
     struct ucred peer_credentials;
 #endif
@@ -1889,7 +1889,7 @@ static int net_address_unix_socket_peer_pid_raw(flb_sockfd_t fd,
         return -1;
     }
 
-#if !defined(FLB_SYSTEM_MACOS) && !defined(FLB_SYSTEM_FREEBSD)
+#if !defined(FLB_SYSTEM_MACOS) && !defined(FLB_SYSTEM_FREEBSD) && !defined(__QNX__)
     peer_credentials_size = sizeof(struct ucred);
 
     result = getsockopt(fd,

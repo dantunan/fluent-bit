@@ -22,7 +22,7 @@
 
 /* Required by OSX */
 #ifndef _XOPEN_SOURCE
-#define _XOPEN_SOURCE
+#define _XOPEN_SOURCE 500
 #endif
 
 #ifndef _DEFAULT_SOURCE

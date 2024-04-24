@@ -197,4 +197,4 @@ check_pie_supported()
 set_target_properties (multi_module PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 # libraries
-target_link_libraries(multi_module PRIVATE vmlib -lpthread -lm)
+target_link_libraries(multi_module PRIVATE vmlib-lc -lm)

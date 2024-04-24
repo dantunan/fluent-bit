@@ -441,7 +441,7 @@ if(FLB_SHARED_LIB)
   if(CMAKE_SYSTEM_NAME MATCHES "Windows")
     target_link_libraries(fluent-bit-shared ${FLB_DEPS})
   else()
-    target_link_libraries(fluent-bit-shared ${FLB_DEPS} -lpthread)
+    target_link_libraries(fluent-bit-shared ${FLB_DEPS} -lc)
   endif()
 
   if (MSVC)

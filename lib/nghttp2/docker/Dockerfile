@@ -29,7 +29,7 @@ RUN git clone --depth 1 -b v1.1.0 https://github.com/ngtcp2/ngtcp2 && \
     autoreconf -i && \
     ./configure --enable-lib-only \
         LIBTOOL_LDFLAGS="-static-libtool-libs" \
-        OPENSSL_LIBS="-l:libssl.a -l:libcrypto.a -ldl -lpthread" \
+        OPENSSL_LIBS="-l:libssl.a -l:libcrypto.a -ldl -lc" \
         PKG_CONFIG_PATH="/usr/local/lib64/pkgconfig" && \
     make -j$(nproc) && \
     make install-strip && \

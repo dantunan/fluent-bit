@@ -35,6 +35,8 @@
 #include "win32/dirent.h"
 #endif
 
+#include <dirent.h>
+
 #ifdef CIO_HAVE_BACKEND_FILESYSTEM
 static int cio_scan_stream_files(struct cio_ctx *ctx, struct cio_stream *st,
                                  char *chunk_extension)
@@ -45,8 +47,11 @@ static int cio_scan_stream_files(struct cio_ctx *ctx, struct cio_stream *st,
     int ext_off;
     int ext_len = 0;
     char *path;
+    char *chunk_path;
+    int chunk_path_len = 0;
     DIR *dir;
     struct dirent *ent;
+    struct stat stat_buf;
 
     len = strlen(ctx->options.root_path) + strlen(st->name) + 2;
     path = malloc(len);
@@ -81,8 +86,23 @@ static int cio_scan_stream_files(struct cio_ctx *ctx, struct cio_stream *st,
             continue;
         }
 
+        chunk_path_len = strlen(path) + strlen(ent->d_name) + 2;
+        chunk_path = malloc(chunk_path_len);
+        if(chunk_path == NULL){
+            return EXIT_FAILURE;
+        }
+        strcpy(chunk_path, path);
+        strcat(chunk_path, "/");
+        strcat(chunk_path, ent->d_name);
+
+        if(-1 == stat(chunk_path, &stat_buf)){
+            perror("stat error");
+        }
+
+        free(chunk_path);
         /* Look just for directories */
-        if (ent->d_type != DT_REG) {
+        //if (ent->d_type != DT_REG) {
+        if (!S_ISREG(stat_buf.st_mode)){
             continue;
         }
 
@@ -129,6 +149,7 @@ int cio_scan_streams(struct cio_ctx *ctx, char *chunk_extension)
     DIR *dir;
     struct dirent *ent;
     struct cio_stream *st;
+    struct stat stat_buf;
 
     dir = opendir(ctx->options.root_path);
     if (!dir) {
@@ -144,8 +165,13 @@ int cio_scan_streams(struct cio_ctx *ctx, char *chunk_extension)
             continue;
         }
 
+        if(-1 == stat(ent->d_name, &stat_buf)){
+            perror("stat");
+        }
+
         /* Look just for directories */
-        if (ent->d_type != DT_DIR) {
+        //if (ent->d_type != DT_REG) {
+        if (!S_ISDIR(stat_buf.st_mode)){
             continue;
         }
 

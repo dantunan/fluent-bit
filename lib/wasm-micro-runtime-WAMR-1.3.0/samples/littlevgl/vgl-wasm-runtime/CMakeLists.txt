@@ -32,5 +32,5 @@ add_executable (vgl_wasm_runtime src/platform/${WAMR_BUILD_PLATFORM}/main.c
                 src/platform/${WAMR_BUILD_PLATFORM}/display_indev.c
                 src/platform/${WAMR_BUILD_PLATFORM}/mouse.c)
 
-target_link_libraries (vgl_wasm_runtime vmlib -lm -ldl -lpthread -lSDL2)
+target_link_libraries (vgl_wasm_runtime vmlib -lm -ldl-lc -lSDL2)
 

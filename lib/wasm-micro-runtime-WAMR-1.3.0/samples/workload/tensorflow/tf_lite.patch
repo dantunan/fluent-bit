@@ -8,7 +8,7 @@ index c7ddff58440..ebfebaead35 100644
  # overridden by the platform-specific settings in target makefiles.
 -LIBS := \
 --lstdc++ \
---lpthread \
+--lc \
 --lm \
 --lz \
 +LIBS := -lm \
