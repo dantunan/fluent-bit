@@ -87,10 +87,10 @@ static inline int msgpack_sbuffer_write(void* data, const char* buf, size_t len)
     char *tmp=NULL;
     int new_size = (sbuf->size + len)*2;
     if(new_size == 0){return -1;}
-    tmp = malloc(new_size);
+    tmp = calloc(1, new_size);
     if(!tmp){return -1;}
     memcpy(tmp, sbuf->data, sbuf->size);
-
+    free(sbuf->data);
     memcpy(tmp + sbuf->size, buf, len);
     sbuf->size += len;
 

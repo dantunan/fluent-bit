@@ -1750,7 +1750,7 @@ char *flb_tail_file_name(struct flb_tail_file *file)
     buf[s] = '\0';
 
 #elif defined(__QNX__)
-    buf_len = iofdinfo(file->fd, _FDINFO_FLAG_LOCALPATH, NULL, buf, PATH_MAX);
+    buf_len = iofdinfo(file->fd, _FDINFO_FLAG_LOCALPATH, NULL, buf, PATH_MAX-1);
     if (buf_len == -1){
         flb_errno();
         flb_free(buf);

@@ -269,6 +269,8 @@ int mk_utils_worker_rename(const char *title)
     return prctl(PR_SET_NAME, title, 0, 0, 0);
 #elif defined (__APPLE__)
     return pthread_setname_np(title);
+#elif defined (__QNX__)
+    return pthread_setname_np(0, title);
 #else
     (void) title;
     return -1;

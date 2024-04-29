@@ -77,7 +77,7 @@ void *flb_malloc(const size_t size) {
         return NULL;
     }
 
-    return malloc(size);
+    return calloc(1, size);
 }
 
 static inline FLB_ALLOCSZ_ATTR(1, 2)
