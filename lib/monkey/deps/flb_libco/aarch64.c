@@ -74,13 +74,14 @@ static void crash(void)
 cothread_t co_create(unsigned int size, void (*entrypoint)(void),
                      size_t *out_size)
 {
+  unsigned int const additional_stack_size = 8192; // change to much larger
    size = (size + 1023) & ~1023;
    cothread_t handle = 0;
 #if HAVE_POSIX_MEMALIGN >= 1
-   if (posix_memalign(&handle, 1024, size + 512) < 0)
+   if (posix_memalign(&handle, 1024, size + additional_stack_size) < 0)
       return 0;
 #else
-   handle = memalign(1024, size + 512);
+   handle = memalign(1024, size + additional_stack_size);
 #endif
 
    if (!handle)
@@ -107,11 +108,11 @@ cothread_t co_create(unsigned int size, void (*entrypoint)(void),
    ptr[16] = 0; /* x26 */
    ptr[17] = 0; /* x27 */
    ptr[18] = 0; /* x28 */
-   ptr[20] = (uintptr_t)ptr + size + 512 - 16; /* x30, stack pointer */
+   ptr[20] = (uintptr_t)ptr + size + additional_stack_size - 16; /* x30, stack pointer */
    ptr[19] = ptr[20]; /* x29, frame pointer */
    ptr[21] = (uintptr_t)entrypoint; /* PC (link register x31 gets saved here). */
 
-   *out_size = size + 512;
+   *out_size = size + additional_stack_size;
    return handle;
 }
 
