@@ -570,6 +570,14 @@ struct mk_config_listener *mk_config_listener_add(char *address,
 void mk_config_set_init_values(struct mk_server *server)
 {
     /* Init values */
+	server->conf_main = MK_DEFAULT_CONFIG_FILE;
+	server->conf_mimetype = MK_DEFAULT_MIMES_CONF_FILE;
+	server->conf_plugin_load = MK_DEFAULT_PLUGIN_LOAD_CONF_FILE;
+	server->conf_sites = MK_DEFAULT_SITES_CONF_DIR;
+	server->conf_plugins = MK_DEFAULT_PLUGINS_CONF_DIR;
+	server->path_conf_root = MK_PATH_CONF;
+
+
     server->is_seteuid = MK_FALSE;
     server->timeout = 15;
     server->hideversion = MK_FALSE;
@@ -582,7 +590,7 @@ void mk_config_set_init_values(struct mk_server *server)
     server->nhosts = 0;
     mk_list_init(&server->hosts);
     server->user = NULL;
-    server->open_flags = O_RDONLY; /* The only place this is effectively used (other than the sanity check) 
+    server->open_flags = O_RDONLY; /* The only place this is effectively used (other than the sanity check)
                                     * is mk_http.c where it's used to test for file existence and the fd is apparently leaked */
     server->index_files = NULL;
     server->conf_user_pub = NULL;
