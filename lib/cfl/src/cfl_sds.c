@@ -44,7 +44,7 @@ cfl_sds_t sds_alloc(size_t size)
     cfl_sds_t s;
     struct cfl_sds *head;
 
-    buf = malloc(CFL_SDS_HEADER_SIZE + size + 1);
+    buf = calloc(1, CFL_SDS_HEADER_SIZE + size + 1);
     if (!buf) {
         return NULL;
     }

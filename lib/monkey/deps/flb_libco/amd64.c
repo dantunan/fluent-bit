@@ -129,13 +129,14 @@ cothread_t co_active() {
 cothread_t co_create(unsigned int size, void (*entrypoint)(void),
                      size_t *out_size){
   cothread_t handle;
+  unsigned int const additional_stack_size = 8192; // change to much larger
   if(!co_swap) {
     co_init();
     co_swap = (void (*)(cothread_t, cothread_t))co_swap_function;
   }
 
   if(!co_active_handle) co_active_handle = &co_active_buffer;
-  size += 4096/*512*/;  /* allocate additional space for storage */
+  size += additional_stack_size;  /* allocate additional space for storage */
   size &= ~15;  /* align stack to 16-byte boundary */
   *out_size = size;
 

@@ -395,6 +395,8 @@ static int utf8_tests_create()
     struct pack_test *test;
     struct dirent *entry;
     struct stat st;
+    int buf_len = 0;
+    char *tmp_buf;
 
     memset(pt, '\0', sizeof(pt));
 
@@ -405,8 +407,21 @@ static int utf8_tests_create()
     }
 
     while ((entry = readdir(dir)) != NULL) {
-        if (entry->d_type != DT_REG) {
-            continue;
+        buf_len = strlen(PACK_SAMPLES) + strlen(entry->d_name) + 2;
+        tmp_buf = malloc(buf_len);
+        if (tmp_buf == NULL){
+            exit(EXIT_FAILURE);
+        }
+        strcpy(tmp_buf, dir);
+        strcat(tmp_buf, "/");
+        strcat(tmp_buf, entry->d_name);
+        if(stat(tmp_buf, &st)==-1){
+          free(tmp_buf);
+          exit(EXIT_FAILURE);
+        }
+        free(tmp_buf);
+        if(S_ISREG(st.st_mode)){
+          continue;
         }
 
         len = strlen(entry->d_name);

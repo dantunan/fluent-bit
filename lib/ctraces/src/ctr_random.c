@@ -20,7 +20,8 @@
 #include <ctraces/ctraces.h>
 
 #if defined(unix) || defined (__unix) || defined(__unix__) || defined(__linux__) || \
-    defined(__APPLE__) || defined(__MACH__) || defined(__FreeBSD__) || defined(__ANDROID__)
+    defined(__APPLE__) || defined(__MACH__) || defined(__FreeBSD__) || defined(__ANDROID__) || \
+    defined(__QNX__)
 #define ITS_A_UNIX_FRIEND
 #endif
 

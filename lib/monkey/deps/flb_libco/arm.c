@@ -49,16 +49,17 @@ cothread_t co_active() {
 cothread_t co_create(unsigned int size, void (*entrypoint)(void),
                      size_t *out_size) {
   unsigned long* handle = 0;
+  unsigned int const additional_stack_size = 8192; // change to much larger
   if(!co_swap) {
     co_init();
     co_swap = (void (*)(cothread_t, cothread_t))co_swap_function;
   }
   if(!co_active_handle) co_active_handle = &co_active_buffer;
-  size += 256;
+  size += additional_stack_size;
   size &= ~15;
   *out_size = size;
 
-  if(handle = (unsigned long*)malloc(size)) {
+  if(handle = (unsigned long*)calloc(1, size)) {
     unsigned long* p = (unsigned long*)((unsigned char*)handle + size);
     handle[8] = (unsigned long)p;
     handle[9] = (unsigned long)entrypoint;

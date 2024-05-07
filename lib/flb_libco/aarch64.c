@@ -74,7 +74,7 @@ static void crash(void)
 cothread_t co_create(unsigned int size, void (*entrypoint)(void),
                      size_t *out_size)
 {
-	  unsigned int const additional_stack_size = 8192; // change to much larger
+	unsigned int const additional_stack_size = 8192; // change to much larger
    size = (size + 1023) & ~1023;
    cothread_t handle = 0;
 #if HAVE_POSIX_MEMALIGN >= 1
