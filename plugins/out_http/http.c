@@ -49,6 +49,22 @@
 
 #include <fluent-bit/flb_callback.h>
 
+#if defined(__QNX700__)
+static char* strndup(const char* src, size_t size){
+    char *dst;
+    int index = 0;
+    dst = malloc(size+1);
+    if (dst){
+        for (index=0; index<size; index++){
+            dst[index] = src[index];
+        }
+        dst[size] = '\0';
+        return dst;
+    }
+    return NULL;
+}
+#endif
+
 static int cb_http_init(struct flb_output_instance *ins,
                         struct flb_config *config, void *data)
 {

@@ -26,7 +26,7 @@
 #ifndef FLB_LANGINFO_H
 #define FLB_LANGINFO_H
 
-#ifndef _MSC_VER
+#if ((!defined(_MSC_VER)) && (defined(__QNX710)))
 #include <langinfo.h>
 #else
 

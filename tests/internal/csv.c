@@ -32,6 +32,22 @@ struct parse_state {
     size_t current_col;
 };
 
+#if defined(__QNX700__)
+static char* strndup(const char* src, size_t size){
+    char *dst;
+    int index = 0;
+    dst = malloc(size+1);
+    if (dst){
+        for (index=0; index<size; index++){
+            dst[index] = src[index];
+        }
+        dst[size] = '\0';
+        return dst;
+    }
+    return NULL;
+}
+#endif
+
 static void field_parsed(void *data, const char *field, size_t field_len)
 {
     struct parse_state *state = data;

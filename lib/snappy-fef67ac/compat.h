@@ -19,7 +19,9 @@
 
 
 #elif !defined(__WIN32__)
+#if defined(__QNX710__)
 #  include <qh/endian.h>
+#endif
 #endif
 
 #include <stdlib.h>

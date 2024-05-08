@@ -42,7 +42,21 @@
 #include <fluent-bit/flb_utils.h>
 #include <fluent-bit/flb_base64.h>
 
-
+#if defined(__QNX700__)
+static char* strndup(const char* src, size_t size){
+    char *dst;
+    int index = 0;
+    dst = malloc(size+1);
+    if (dst){
+        for (index=0; index<size; index++){
+            dst[index] = src[index];
+        }
+        dst[size] = '\0';
+        return dst;
+    }
+    return NULL;
+}
+#endif
 
 void flb_http_client_debug(struct flb_http_client *c,
                            struct flb_callback *cb_ctx)
