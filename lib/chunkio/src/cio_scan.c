@@ -150,6 +150,8 @@ int cio_scan_streams(struct cio_ctx *ctx, char *chunk_extension)
     struct dirent *ent;
     struct cio_stream *st;
     struct stat stat_buf;
+    int buf_len = 0;
+    char *tmp_buf;
 
     dir = opendir(ctx->options.root_path);
     if (!dir) {
@@ -161,25 +163,50 @@ int cio_scan_streams(struct cio_ctx *ctx, char *chunk_extension)
 
     /* Iterate the root_path */
     while ((ent = readdir(dir)) != NULL) {
-        if ((ent->d_name[0] == '.') || (strcmp(ent->d_name, "..") == 0)) {
-            continue;
-        }
+      if ((ent->d_name[0] == '.') || (strcmp(ent->d_name, "..") == 0)) {
+          continue;
+      }
 
-        if(-1 == stat(ent->d_name, &stat_buf)){
-            perror("stat");
-        }
+#if defined(__QNX__)
+      buf_len = strlen(ctx->options.root_path) + strlen(ent->d_name) + 2;
+      tmp_buf = malloc(buf_len);
+      if (tmp_buf == NULL){
+          return EXIT_FAILURE;
+      }
+      strcpy(tmp_buf, ctx->options.root_path);
+      if(ctx->options.root_path[strlen(ctx->options.root_path)-1]!='/'){
+        strcat(tmp_buf, "/");
+      }
+      strcat(tmp_buf, ent->d_name);
+#endif
 
-        /* Look just for directories */
-        //if (ent->d_type != DT_REG) {
-        if (!S_ISDIR(stat_buf.st_mode)){
-            continue;
-        }
 
-        /* register every directory as a stream */
-        st = cio_stream_create(ctx, ent->d_name, CIO_STORE_FS);
-        if (st) {
-            cio_scan_stream_files(ctx, st, chunk_extension);
-        }
+#if defined(__QNX__)
+      if(-1 == stat(tmp_buf, &stat_buf)){
+        perror("stat");
+        free(tmp_buf);
+        continue;
+      }
+
+      /* Look just for directories */
+      if (!S_ISDIR(stat_buf.st_mode)){
+        free(tmp_buf);
+#else
+      if (ent->d_type != DT_DIR) {
+#endif
+          continue;
+      }
+
+      /* register every directory as a stream */
+#if defined(__QNX__)
+      st = cio_stream_create(ctx, tmp_buf, CIO_STORE_FS);
+      free(tmp_buf);
+#else
+      st = cio_stream_create(ctx, ent->d_name, CIO_STORE_FS);
+#endif
+      if (st) {
+          cio_scan_stream_files(ctx, st, chunk_extension);
+      }
     }
 
     closedir(dir);
