@@ -12,7 +12,7 @@ define target_build
 	cmake -B $(BUILDDIR) \
 	      -DFLB_CONFIG_YAML=Off \
 	      -DCMAKE_CXX_STANDARD=14 \
-	      -DCMAKE_BUILD_TYPE=Debug \
+	      -DCMAKE_BUILD_TYPE=Release \
 	      -DCMAKE_SYSTEM_PROCESSOR=${1} \
 	      -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
 	      -DCMAKE_INSTALL_PREFIX=$(PROJECT_DIR)/$(BUILDDIR) \

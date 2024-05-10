@@ -187,10 +187,10 @@ int cio_scan_streams(struct cio_ctx *ctx, char *chunk_extension)
         free(tmp_buf);
         continue;
       }
+      free(tmp_buf);
 
       /* Look just for directories */
       if (!S_ISDIR(stat_buf.st_mode)){
-        free(tmp_buf);
 #else
       if (ent->d_type != DT_DIR) {
 #endif
@@ -198,12 +198,8 @@ int cio_scan_streams(struct cio_ctx *ctx, char *chunk_extension)
       }
 
       /* register every directory as a stream */
-#if defined(__QNX__)
-      st = cio_stream_create(ctx, tmp_buf, CIO_STORE_FS);
-      free(tmp_buf);
-#else
       st = cio_stream_create(ctx, ent->d_name, CIO_STORE_FS);
-#endif
+
       if (st) {
           cio_scan_stream_files(ctx, st, chunk_extension);
       }
